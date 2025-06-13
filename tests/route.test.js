@@ -1,6 +1,6 @@
 import {describe, beforeEach, afterEach, test, expect, vi} from 'vitest';
-import s from '../../src/index.js';
-import m from '../index.js';
+import m from '../src/index';
+import s from 'sin';
 
 describe('m.route', () => {
   let warnSpy;
@@ -73,8 +73,7 @@ describe('m.route', () => {
   test('passes route parameters to the component via m.route.param()', async () => {
     // A User component that reads the ":id" parameter
     const User = {
-      view: vnode => {
-        console.log(vnode);
+      view: () => {
         const userId = m.route.param('id');
         return m('p', `User ID: ${userId}`);
       }

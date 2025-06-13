@@ -1,5 +1,5 @@
 import {it, describe, expect} from 'vitest';
-import m from '../index';
+import m from '../src/index';
 
 describe('m.buildQueryString', () => {
   it('should build a query string from a flat object', () => {

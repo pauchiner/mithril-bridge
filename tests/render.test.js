@@ -1,5 +1,5 @@
 import {describe, afterEach, beforeEach, test, expect, vi} from 'vitest';
-import m from '../index.js';
+import m from '../src/index';
 
 describe('m.render', () => {
   let warnSpy;
