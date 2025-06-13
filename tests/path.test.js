@@ -1,4 +1,4 @@
-import { describe, it, expect } from 'vitest';
+import {describe, it, expect} from 'vitest';
 import m from '../index';
 
 describe('m.buildPathname', () => {
@@ -8,12 +8,12 @@ describe('m.buildPathname', () => {
   });
 
   it('builds a pathname with query string', () => {
-    const result = m.buildPathname("/test", { key: "value" })
+    const result = m.buildPathname('/test', {key: 'value'});
     expect(result).toBe('/test?key=value');
   });
 
   it('builds a pathname with empty parts', () => {
-    const result = m.buildPathname("");
+    const result = m.buildPathname('');
     expect(result).toBe('');
   });
 
@@ -28,7 +28,7 @@ describe('m.parsePathname', () => {
     const result = m.parsePathname('/test');
     expect(result).toEqual({
       path: '/test',
-      params: {},
+      params: {}
     });
   });
 
@@ -36,7 +36,7 @@ describe('m.parsePathname', () => {
     const result = m.parsePathname('/test?key=value');
     expect(result).toEqual({
       path: '/test',
-      params: {key: "value"},
+      params: {key: 'value'}
     });
   });
 
@@ -44,7 +44,7 @@ describe('m.parsePathname', () => {
     const result = m.parsePathname('?key=value');
     expect(result).toEqual({
       path: '/',
-      params: {key: "value"},
+      params: {key: 'value'}
     });
   });
 

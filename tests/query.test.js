@@ -1,9 +1,9 @@
-import { it, describe, expect } from 'vitest'
-import m from '../index'
+import {it, describe, expect} from 'vitest';
+import m from '../index';
 
 describe('m.buildQueryString', () => {
   it('should build a query string from a flat object', () => {
-    const params = { foo: 'bar', baz: 42 };
+    const params = {foo: 'bar', baz: 42};
     const qs = m.buildQueryString(params);
 
     // Order of keys is not guaranteed, so split and compare as sets
@@ -13,16 +13,16 @@ describe('m.buildQueryString', () => {
   });
 
   it('should encode array values correctly', () => {
-    const params = { colors: ['red', 'green', 'blue'] };
+    const params = {colors: ['red', 'green', 'blue']};
     const qs = m.buildQueryString(params);
-    expect(qs).toBe("colors%5B0%5D=red&colors%5B1%5D=green&colors%5B2%5D=blue")
+    expect(qs).toBe('colors%5B0%5D=red&colors%5B1%5D=green&colors%5B2%5D=blue');
   });
 
   it('should handle nested objects using bracket notation', () => {
-    const params = { user: { name: 'Pau', age: 20 } };
+    const params = {user: {name: 'Pau', age: 20}};
     const qs = m.buildQueryString(params);
 
-    expect(qs).toBe("user%5Bname%5D=Pau&user%5Bage%5D=20")
+    expect(qs).toBe('user%5Bname%5D=Pau&user%5Bage%5D=20');
   });
 
   it('should return an empty string for empty object', () => {

@@ -1,11 +1,11 @@
-import { defineConfig } from 'vitest/config'
+import {defineConfig} from 'vitest/config';
 
 export default defineConfig({
   test: {
     coverage: {
       enabled: true,
-      provider: 'v8',
+      provider: 'v8'
     },
-    environment: 'happy-dom',
-  },
-})
+    environment: 'happy-dom'
+  }
+});

@@ -8,11 +8,7 @@ export default {
     file: './dist/m-bridge.min.js',
     sourcemap: true,
     format: 'umd',
-    name: 'm',
+    name: 'm'
   },
-  plugins: [
-    commonjs(),
-    resolve(),
-    terser()
-  ]
+  plugins: [commonjs(), resolve(), terser()]
 };
