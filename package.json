@@ -1,0 +1,57 @@
+{
+  "name": "@sin/mithril",
+  "author": "Pau García Chiner <https://digitalvalue.es>",
+  "description": "An abstraction layer to use mithril with sin internally.",
+  "version": "0.1.0",
+  "type": "module",
+  "types": "/src/types.d.ts",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "vitest run",
+    "format": "biome format --write .",
+    "build": "rollup -c rollup.config.js",
+    "dev": "rollup -c rollup.config.js -w"
+  },
+  "repository": "digitalvalue/mithril-bridge",
+  "homepage": "https://github.com/digitalvalue/mithril-bridge",
+  "bugs": "https://github.com/digitalvalue/mithril-bridge/issues",
+  "keywords": [
+    "view",
+    "framework",
+    "hyperscript",
+    "mithril.js",
+    "mithril",
+    "bridge",
+    "sin.js",
+    "sin",
+    "simple",
+    "css",
+    "html",
+    "javascript",
+    "not-react",
+    "not-vue"
+  ],
+  "engines": {
+    "node": ">=20.11"
+  },
+  "dependencies": {
+    "sin": "1.0.0-rc.1"
+  },
+  "devDependencies": {
+    "@biomejs/biome": "1.9.4",
+    "@rollup/plugin-commonjs": "28.0.3",
+    "@rollup/plugin-node-resolve": "16.0.1",
+    "@rollup/plugin-terser": "0.4.4",
+    "@vitest/coverage-v8": "3.2.3",
+    "@vitest/ui": "3.2.3",
+    "happy-dom": "17.6.3",
+    "rollup": "4.41.1",
+    "vitest": "3.2.3"
+  },
+  "packageManager": "pnpm@10.5.2",
+  "pnpm": {
+    "overrides": {
+      "sin": "link:../../Library/pnpm/global/5/node_modules/sin"
+    }
+  }
+}
