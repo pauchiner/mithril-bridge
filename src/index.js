@@ -135,17 +135,9 @@ m.route.Link = {
     // We don't strip the other parameters because for convenience we
     // let them be specified in the selector as well.
     
-    // TODO: THIS IS DUE TO A PROBLEM WITH CHILDREN FILTERING (QUICK FIX)
-    const attrs = {}
-    Object.entries(vnode.attrs).forEach(([key, value]) => {
-      if (key !== '0') {
-        attrs[key] = value
-      }
-    });
-
     let child = m(
       vnode.attrs.selector || "a",
-      m.censor(attrs, ["options", "params", "selector", "onclick"]),
+      m.censor(vnode.attrs, ["options", "params", "selector", "onclick"]),
       vnode.children
     )
     let options, onclick, href

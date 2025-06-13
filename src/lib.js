@@ -237,9 +237,15 @@ export const component = (view, attrs, ...children) => {
     // (Here we merge the attributes and children)
     return (data) => {
       /* This `data` return needs to be diffed in order to get only the attrs and not the children */
-      vnode.attrs = Object.fromEntries(
-        Object.entries(data).filter(([_, val]) => !(val instanceof s.View))
-      );
+
+      // TODO: THIS IS DUE TO A PROBLEM WITH CHILDREN FILTERING (QUICK FIX WITH 0 objects)
+      Object.entries(data).forEach(([key, value]) => {
+        if(value instanceof s.View) return;
+
+        if (key !== '0') {
+          vnode.attrs[key] = value
+        }
+      });
 
       const components = vnode.state.view.call(
         context(vnode.state.view, vnode),
