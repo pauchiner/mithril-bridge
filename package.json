@@ -10,7 +10,7 @@
     "test": "vitest run",
     "format": "biome format --write .",
     "build": "rollup -c rollup.config.js",
-    "dev": "rollup -c rollup.config.js -w"
+    "dev": "vite"
   },
   "repository": "digitalvalue/mithril-bridge",
   "homepage": "https://github.com/digitalvalue/mithril-bridge",
@@ -46,6 +46,7 @@
     "@vitest/ui": "3.2.3",
     "happy-dom": "17.6.3",
     "rollup": "4.41.1",
+    "vite": "6.3.5",
     "vitest": "3.2.3"
   },
   "packageManager": "pnpm@10.5.2",
