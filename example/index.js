@@ -140,7 +140,6 @@ const Link = () => {
 
   return {
     view: vnode => [
-      console.log(vnode),
       m(
         'a',
         {
