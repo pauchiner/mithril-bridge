@@ -1,11 +1,14 @@
-import {defineConfig} from 'vitest/config';
+import { defineConfig } from 'vitest/config'
 
 export default defineConfig({
   test: {
     coverage: {
-      enabled: true,
-      provider: 'v8'
+      provider: 'v8',
+      include: ['src/**'],
     },
-    environment: 'happy-dom'
-  }
-});
+    environment: 'happy-dom',
+  },
+  resolve: {
+    conditions: ['import', 'module', 'default'],
+  },
+})
