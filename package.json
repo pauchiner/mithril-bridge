@@ -7,10 +7,11 @@
   "types": "/src/types.d.ts",
   "main": "src/index.js",
   "scripts": {
+    "dev": "vite",
     "test": "vitest run",
+    "lint": "biome lint .",
     "format": "biome format --write .",
-    "build": "rollup -c rollup.config.js",
-    "dev": "vite"
+    "build": "rollup -c rollup.config.js"
   },
   "repository": "digitalvalue/mithril-bridge",
   "homepage": "https://github.com/digitalvalue/mithril-bridge",
