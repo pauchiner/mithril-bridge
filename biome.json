@@ -4,7 +4,8 @@
     "ignore": [
       "node_modules/**",
       "coverage/**",
-      "dist/**"
+      "dist/**",
+      "src/**"
     ]
   },
   "organizeImports": {
