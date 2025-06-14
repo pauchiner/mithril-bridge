@@ -7,5 +7,8 @@ export default defineConfig({
     fs: {
       allow: ['..']
     }
-  }
+  },
+  resolve: {
+    conditions: ['import', 'module', 'default'],
+  },
 });
