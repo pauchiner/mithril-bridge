@@ -1,6 +1,6 @@
 {
   "name": "@sin/mithril",
-  "author": "Pau García Chiner <https://digitalvalue.es>",
+  "author": "Pau García Chiner <https://pauchiner.es>",
   "description": "An abstraction layer to use mithril with sin internally.",
   "version": "0.1.0",
   "type": "module",
@@ -15,9 +15,9 @@
     "build": "rollup -c rollup.config.js",
     "test:coverage": "vitest run --coverage"
   },
-  "repository": "digitalvalue/mithril-bridge",
-  "homepage": "https://github.com/digitalvalue/mithril-bridge",
-  "bugs": "https://github.com/digitalvalue/mithril-bridge/issues",
+  "repository": "pauchiner/mithril-bridge",
+  "homepage": "https://github.com/pauchiner/mithril-bridge",
+  "bugs": "https://github.com/pauchiner/mithril-bridge/issues",
   "keywords": [
     "view",
     "framework",
@@ -38,7 +38,7 @@
     "node": ">=20.11"
   },
   "dependencies": {
-    "sin": "file:../sinjs"
+    "sin": "1.0.0-rc.1"
   },
   "devDependencies": {
     "@biomejs/biome": "1.9.4",
@@ -50,6 +50,5 @@
     "rollup": "4.43.0",
     "vite": "6.3.5",
     "vitest": "3.2.3"
-  },
-  "packageManager": "pnpm@10.5.2"
+  }
 }
