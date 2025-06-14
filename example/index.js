@@ -1,3 +1,4 @@
+import module from '../package.json';
 import m from '../src/index';
 
 const Content = {
@@ -22,7 +23,7 @@ const Content = {
             { style: { marginBottom: '1rem', fontSize: '2.4rem' } },
             'Mithril + Sin'
           ),
-          m('p', 'By Digital Value')
+          m('p', `Version ${module.version}`)
         ]),
         m('section', [
           m(
