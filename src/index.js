@@ -19,7 +19,9 @@ function m(tag, attrs, ...children) {
     Object.assign(selector.attrs, attrs, mergeClass(selector.attrs, attrs))
   }
   else {
-    children.unshift(attrs)
+    if(attrs !== undefined) {
+      children.unshift(attrs)
+    }
   }
 
   return s(selector.tag, selector.attrs, ...children)
