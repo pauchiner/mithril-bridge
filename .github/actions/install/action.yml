@@ -3,6 +3,7 @@ description: Install the toolchain and dependencies
 
 runs:
   using: "composite"
+  shell: "bash"
 
   steps:
     - name: Setup Node.js
