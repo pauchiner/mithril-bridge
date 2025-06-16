@@ -1,6 +1,7 @@
 import {describe, beforeEach, afterEach, test, expect, vi} from 'vitest';
 import m from '../src/index.js';
-import s from 'sin';
+
+const sleep = x => new Promise(r => setTimeout(r, x));
 
 describe('m.route', () => {
   let warnSpy;
@@ -63,7 +64,7 @@ describe('m.route', () => {
     window.dispatchEvent(new HashChangeEvent('hashchange'));
 
     // Wait for the route change
-    await s.sleep(10);
+    await sleep(10);
 
     // After hashchange, it should render About
     expect(window.location.hash).toBe('#!/about');
@@ -91,7 +92,7 @@ describe('m.route', () => {
     // Change to another user
     window.location.hash = '#!/user/7';
     window.dispatchEvent(new HashChangeEvent('hashchange'));
-    await s.sleep(10);
+    await sleep(10);
 
     expect(document.body.innerHTML).toBe('<p>User ID: 7</p>');
   });
@@ -233,7 +234,7 @@ describe('m.route.param', () => {
     // Manually set hash to simulate navigating to a specific user
     window.location.hash = '#!/user/42';
     window.dispatchEvent(new HashChangeEvent('hashchange'));
-    await s.sleep(10);
+    await sleep(10);
 
     expect(m.route.param('id')).toBe('42');
     expect(document.body.innerHTML).toBe('<p>User ID: 42</p>');
@@ -241,7 +242,7 @@ describe('m.route.param', () => {
     // Change to another id
     window.location.hash = '#!/user/99';
     window.dispatchEvent(new HashChangeEvent('hashchange'));
-    await s.sleep(10);
+    await sleep(10);
 
     expect(m.route.param('id')).toBe('99');
     expect(document.body.innerHTML).toBe('<p>User ID: 99</p>');
