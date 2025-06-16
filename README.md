@@ -14,8 +14,8 @@ This bridge aims to provide a 1:1 compatibility layer between Mithril and Sin, a
 
 ### Core Virtual DOM API
 * [X] `m()` hyperscript: map `m(tag, attrs, children)` to Sin VDOM
-* [ ] Fragment support (`[]`) and text-node handling
 * [ ] Vnode normalization: `attrs`, `children`, `state`, `dom`, `instance`
+* [X] Fragment support (`[]`) and text-node handling
 * [X] `m.mount(root, component)` via Sin's mount API
 * [X] `m.render(root, vnode)`: client-side render without routing
 * [X] `m.redraw()` shim and auto-redraw on events/timers
@@ -27,12 +27,12 @@ This bridge aims to provide a 1:1 compatibility layer between Mithril and Sin, a
 * [X] Object-components: `view`, `oninit`, `oncreate`, `onupdate`, `onbeforeremove`, `onremove`
 * [X] Function-components support
 * [ ] `onbeforeupdate` hook mapping
+* [ ] `onbeforedelete` hook mapping
 * [X] Context propagation (`this`/`vnode.state`) consistency
 
 ### Attributes & Events
 * [X] Attribute translation: `class`, `style`, `id`, custom attributes
 * [X] Event binding: `onclick`, `oninput`, `onchange`, etc., via Sin's event API
-* [ ] Capture/passive event options
 * [X] `data-*` attribute passthrough
 * [X] `oncreate` and `onupdate` DOM ref callbacks
 
@@ -56,8 +56,7 @@ This bridge aims to provide a 1:1 compatibility layer between Mithril and Sin, a
 
 ### Testing & QA
 * [ ] Unit tests for each `m.*` shim
-* [ ] Integration tests with sample Mithril apps
-* [ ] Performance benchmarks vs. Mithril and Sin
+* [X] Integration tests with sample Mithril apps
 
 ## Quick Start
 
