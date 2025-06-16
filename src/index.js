@@ -392,7 +392,13 @@ m.trust = (html) => {
 }
 
 // Fragment
-m.fragment = (attrs, children) => s(() => children)(attrs)
+m.fragment = (attrs, children) => {
+  if(children !== undefined) {
+    return s`[`(attrs, children);
+  }
+  
+  return s`[`(attrs)
+}
 
 //Censor
 m.censor = (attrs, extras) => {
