@@ -14,7 +14,7 @@ jobs:
         uses: ./.github/actions/install
 
       - name: Lint
-        run: npm run lint
+        run: "npx @biomejs/biome lint ."
 
   test:
     name: 🧪 Test
