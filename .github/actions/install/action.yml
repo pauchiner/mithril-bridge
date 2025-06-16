@@ -2,8 +2,7 @@ name: Install Repo
 description: Install the toolchain and dependencies
 
 inputs:
-  GITHUB_TOKEN:
-    description: 'GitHub Personal Access Token (with repo scope)'
+  GITHUB_TOKEN: description: 'GitHub Personal Access Token (with repo scope)'
     required: true
 
 runs:
@@ -25,4 +24,4 @@ runs:
     - name: Install dependencies
       shell: bash
       run: |
-        sed -i "s|github:pauchiner/sinjs|https://${{inputs.GITHUB_TOKEN}}@github.com/pauchiner/sinjs.git|" package.json && npm ci
+        sed -i '' "s|github:pauchiner/sinjs|https://${{inputs.GITHUB_TOKEN}}@github.com/pauchiner/sinjs.git|" package.json && npm ci
