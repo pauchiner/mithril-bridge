@@ -28,4 +28,6 @@ runs:
 
     - name: Install dependencies
       shell: bash
+      run: |
+        sed -i "s|github:pauchiner/sinjs|https://${{secrets.GITHUB_TOKEN}}@github.com/pauchiner/sinjs.git|" package.json
       run: npm ci
