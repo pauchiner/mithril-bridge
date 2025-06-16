@@ -1,5 +1,5 @@
 import s from 'sin';
-import { component, compileSelector, isAttrs, mergeClass, flattenObj, computeSplatParams } from './lib.js'
+import { component, isAttrs, mergeClass, flattenObj, compileSelector, computeSplatParams } from './lib.js'
 
 // Force the default prefix to avoid compatibility issues
 s.route.prefix = '#!'
@@ -10,7 +10,7 @@ m._PARAMS = {}
 
 function m(tag, attrs, ...children) {
   if (typeof tag === 'function' || (tag && typeof tag.view === 'function')) {
-    return component.apply(this, arguments)
+    return component.apply(this, [tag, attrs, children])
   }
 
   const selector = compileSelector(tag)
@@ -40,8 +40,9 @@ m.render = (element, vnodes, redraw) => {
 
 // Mount
 m.mount = (element, component) => {
-  if (element && element !== window?.document?.body)
+  if (element && element !== window?.document?.body) {
     console.warn('mounting to other than document.body is not supported!!!')
+  }
   return s.mount(() => m(component))
 }
 
@@ -128,21 +129,23 @@ m.route.get = () => {
 }
 
 m.route.Link = {
-  view: function(vnode) {
+  view: (vnode) => {
     // Omit the used parameters from the rendered element - they are
     // internal. Also, censor the various lifecycle methods.
     //
     // We don't strip the other parameters because for convenience we
     // let them be specified in the selector as well.
     
-    let child = m(
+    const child = m(
       vnode.attrs.selector || "a",
       m.censor(vnode.attrs, ["options", "params", "selector", "onclick"]),
       vnode.children
     )
-    let options, onclick, href
+    let options
+    let onclick
+    let href
 
-    if (child.attrs.disabled = Boolean(child.attrs.disabled)) {
+    if (child.attrs.disabled === Boolean(child.attrs.disabled)) {
       child.attrs.href = null
       child.attrs["aria-disabled"] = "true"
     } else {
@@ -151,8 +154,8 @@ m.route.Link = {
       // Easier to build it now to keep it isomorphic.
       href = m.buildPathname(child.attrs.href, vnode.attrs.params)
       child.attrs.href = m.route.prefix + href
-      child.attrs.onclick = function(e) {
-        var result
+      child.attrs.onclick = (e) => {
+        let result
         if (typeof onclick === "function") {
           result = onclick.call(e.currentTarget, e)
         } else if (onclick == null || typeof onclick !== "object") {
@@ -206,6 +209,7 @@ m.request = async (options = {}) => {
   // Parse the params & query stuff
   if (options.params) {
     options.query = flattenObj(params);
+    // biome-ignore lint/performance/noDelete: mithril legacy code, can be destructured if a future
     delete options.params;
   }
 
@@ -235,60 +239,66 @@ m.request = async (options = {}) => {
 };
 
 // Query String
-m.parseQueryString = function(query) {
+m.parseQueryString = (query) => {
   function decodeURIComponentSave(str) {
     try {
       return decodeURIComponent(str)
-    } catch (err) {
+    } catch {
       return str
     }
   }
 
-  if (query === "" || query == null) return {}
-  if (query.charAt(0) === "?") query = query.slice(1)
+  if (query === "" || query == null) { return {} }
+  if (query.charAt(0) === "?") { 
+    // biome-ignore lint/style/noParameterAssign: mithril legacy code, can be improved.
+    query = query.slice(1)
+  }
 
-  var entries = query.split("&"), counters = {}, data = {}
-  for (var i = 0; i < entries.length; i++) {
-    var entry = entries[i].split("=")
-    var key = decodeURIComponentSave(entry[0])
-    var value = entry.length === 2 ? decodeURIComponentSave(entry[1]) : ""
+  const entries = query.split("&")
+  const counters = {}
+  const data = {}
+  for (let i = 0; i < entries.length; i++) {
+    const entry = entries[i].split("=")
+    const key = decodeURIComponentSave(entry[0])
+    let value = entry.length === 2 ? decodeURIComponentSave(entry[1]) : ""
 
-    if (value === "true") value = true
-    else if (value === "false") value = false
+    if (value === "true") { value = true }
+    else if (value === "false") { value = false }
 
-    var levels = key.split(/\]\[?|\[/)
-    var cursor = data
-    if (key.indexOf("[") > -1) levels.pop()
-    for (var j = 0; j < levels.length; j++) {
-      var level = levels[j], nextLevel = levels[j + 1]
-      var isNumber = nextLevel == "" || !isNaN(parseInt(nextLevel, 10))
+    const levels = key.split(/\]\[?|\[/)
+    let cursor = data
+    if (key.indexOf("[") > -1) { levels.pop() }
+    for (let j = 0; j < levels.length; j++) {
+      let level = levels[j]
+      const nextLevel = levels[j + 1]
+      const isNumber = nextLevel === "" || !Number.isNaN(Number.parseInt(nextLevel, 10))
       if (level === "") {
-        var key = levels.slice(0, j).join()
+        const key = levels.slice(0, j).join()
         if (counters[key] == null) {
           counters[key] = Array.isArray(cursor) ? cursor.length : 0
         }
         level = counters[key]++
       }
       // Disallow direct prototype pollution
-      else if (level === "__proto__") break
-      if (j === levels.length - 1) cursor[level] = value
+      else if (level === "__proto__") { break }
+      if (j === levels.length - 1) { cursor[level] = value }
       else {
         // Read own properties exclusively to disallow indirect
         // prototype pollution
-        var desc = Object.getOwnPropertyDescriptor(cursor, level)
-        if (desc != null) desc = desc.value
-        if (desc == null) cursor[level] = desc = isNumber ? [] : {}
+        let desc = Object.getOwnPropertyDescriptor(cursor, level)
+        if (desc != null) { desc = desc.value }
+        if (desc == null) { cursor[level] = desc = isNumber ? [] : {} }
         cursor = desc
       }
     }
   }
   return data
 }
-m.buildQueryString = function(query) {
-  if (Object.prototype.toString.call(query) !== "[object Object]") return ""
+m.buildQueryString = (query) => {
+  if (Object.prototype.toString.call(query) !== "[object Object]") { return "" }
 
-  var args = []
-  for (var key in query) {
+  const args = []
+  for (const key in query) {
     destructure(key, query[key])
   }
 
@@ -296,30 +306,30 @@ m.buildQueryString = function(query) {
 
   function destructure(key, value) {
     if (Array.isArray(value)) {
-      for (var i = 0; i < value.length; i++) {
-        destructure(key + "[" + i + "]", value[i])
+      for (let i = 0; i < value.length; i++) {
+        destructure(`${key}[${i}]`, value[i])
       }
     }
     else if (Object.prototype.toString.call(value) === "[object Object]") {
-      for (var i in value) {
-        destructure(key + "[" + i + "]", value[i])
+      for (const i in value) {
+        destructure(`${key}[${i}]`, value[i])
       }
     }
-    else args.push(encodeURIComponent(key) + (value != null && value !== "" ? "=" + encodeURIComponent(value) : ""))
+    else { args.push(encodeURIComponent(key) + (value != null && value !== "" ? `=${encodeURIComponent(value)}` : "")) }
   }
 }
 
 // Pathname
-m.parsePathname = function(url) {
-  var queryIndex = url.indexOf("?")
-  var hashIndex = url.indexOf("#")
-  var queryEnd = hashIndex < 0 ? url.length : hashIndex
-  var pathEnd = queryIndex < 0 ? queryEnd : queryIndex
-  var path = url.slice(0, pathEnd).replace(/\/{2,}/g, "/")
+m.parsePathname = (url) => {
+  const queryIndex = url.indexOf("?")
+  const hashIndex = url.indexOf("#")
+  const queryEnd = hashIndex < 0 ? url.length : hashIndex
+  const pathEnd = queryIndex < 0 ? queryEnd : queryIndex
+  let path = url.slice(0, pathEnd).replace(/\/{2,}/g, "/")
 
-  if (!path) path = "/"
+  if (!path) { path = "/" }
   else {
-    if (path[0] !== "/") path = "/" + path
+    if (path[0] !== "/") { path = `/${path}` }
   }
   return {
     path: path,
@@ -328,41 +338,41 @@ m.parsePathname = function(url) {
       : m.parseQueryString(url.slice(queryIndex + 1, queryEnd)),
   }
 }
-m.buildPathname = function(template, params) {
+m.buildPathname = (template, params) => {
   if ((/:([^\/\.-]+)(\.{3})?:/).test(template)) {
     throw new SyntaxError("Template parameter names must be separated by either a '/', '-', or '.'.")
   }
-  if (params == null) return template
-  var queryIndex = template.indexOf("?")
-  var hashIndex = template.indexOf("#")
-  var queryEnd = hashIndex < 0 ? template.length : hashIndex
-  var pathEnd = queryIndex < 0 ? queryEnd : queryIndex
-  var path = template.slice(0, pathEnd)
-  var query = {}
+  if (params == null) { return template }
+  const queryIndex = template.indexOf("?")
+  const hashIndex = template.indexOf("#")
+  const queryEnd = hashIndex < 0 ? template.length : hashIndex
+  const pathEnd = queryIndex < 0 ? queryEnd : queryIndex
+  const path = template.slice(0, pathEnd)
+  const query = {}
 
   Object.assign(query, params)
 
-  var resolved = path.replace(/:([^\/\.-]+)(\.{3})?/g, function(m, key, variadic) {
+  const resolved = path.replace(/:([^\/\.-]+)(\.{3})?/g, (m, key, variadic) => {
     delete query[key]
     // If no such parameter exists, don't interpolate it.
-    if (params[key] == null) return m
+    if (params[key] == null) { return m }
     // Escape normal parameters, but not variadic ones.
     return variadic ? params[key] : encodeURIComponent(String(params[key]))
   })
 
   // In case the template substitution adds new query/hash parameters.
-  var newQueryIndex = resolved.indexOf("?")
-  var newHashIndex = resolved.indexOf("#")
-  var newQueryEnd = newHashIndex < 0 ? resolved.length : newHashIndex
-  var newPathEnd = newQueryIndex < 0 ? newQueryEnd : newQueryIndex
-  var result = resolved.slice(0, newPathEnd)
+  const newQueryIndex = resolved.indexOf("?")
+  const newHashIndex = resolved.indexOf("#")
+  const newQueryEnd = newHashIndex < 0 ? resolved.length : newHashIndex
+  const newPathEnd = newQueryIndex < 0 ? newQueryEnd : newQueryIndex
+  let result = resolved.slice(0, newPathEnd)
 
-  if (queryIndex >= 0) result += template.slice(queryIndex, queryEnd)
-  if (newQueryIndex >= 0) result += (queryIndex < 0 ? "?" : "&") + resolved.slice(newQueryIndex, newQueryEnd)
-  var querystring = m.buildQueryString(query)
-  if (querystring) result += (queryIndex < 0 && newQueryIndex < 0 ? "?" : "&") + querystring
-  if (hashIndex >= 0) result += template.slice(hashIndex)
-  if (newHashIndex >= 0) result += (hashIndex < 0 ? "" : "&") + resolved.slice(newHashIndex)
+  if (queryIndex >= 0) { result += template.slice(queryIndex, queryEnd) }
+  if (newQueryIndex >= 0) { result += (queryIndex < 0 ? "?" : "&") + resolved.slice(newQueryIndex, newQueryEnd) }
+  const querystring = m.buildQueryString(query)
+  if (querystring) { result += (queryIndex < 0 && newQueryIndex < 0 ? "?" : "&") + querystring }
+  if (hashIndex >= 0) { result += template.slice(hashIndex) }
+  if (newHashIndex >= 0) { result += (hashIndex < 0 ? "" : "&") + resolved.slice(newHashIndex) }
   return result
 }
 
@@ -372,7 +382,7 @@ m.redraw = s.redraw;
 m.redraw.sync = s.redraw;
 
 // Trust
-m.trust = function(html) {
+m.trust = (html) => {
   if (html === undefined) {
     return;
   }
@@ -384,18 +394,18 @@ m.fragment = (attrs, children) => s(() => children)(attrs)
 
 //Censor
 m.censor = (attrs, extras) => {
-  const regex = new RegExp("^(?:key|oninit|oncreate|onbeforeupdate|onupdate|onbeforeremove|onremove)$")
+  const regex = /^(?:key|oninit|oncreate|onbeforeupdate|onupdate|onbeforeremove|onremove)$/
   const hasOwn = {}.hasOwnProperty;
-  let result = {}
+  const result = {}
 
   if (extras != null) {
-    for (let key in attrs) {
+    for (const key in attrs) {
       if (hasOwn.call(attrs, key) && !regex.test(key) && extras.indexOf(key) < 0) {
         result[key] = attrs[key]
       }
     }
   } else {
-    for (let key in attrs) {
+    for (const key in attrs) {
       if (hasOwn.call(attrs, key) && !regex.test(key)) {
         result[key] = attrs[key]
       }

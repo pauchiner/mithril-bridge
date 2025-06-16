@@ -20,8 +20,8 @@ export const isAttrs = (x) => {
  */
 export const mergeClass = (a, b) => {
   return {
-    className: (a.className ? a.className + ' ' : '') + (b.className || ''),
-    class: (a.class ? a.class + ' ' : '') + (b.class || '')
+    className: (a.className ? `${a.className} ` : '') + (b.className || ''),
+    class: (a.class ? `${a.class} ` : '') + (b.class || '')
   }
 }
 
@@ -50,7 +50,7 @@ export const computeSplatParams = pattern => {
       const available = routeSegs.length - r;
 
       // If too few segments to satisfy the rest of the pattern, no match
-      if (available < remainingPatterns) return {};
+      if (available < remainingPatterns) { return {}; }
 
       // Consume just enough to leave room for post-splat segments
       const splatCount = available - remainingPatterns;
@@ -61,7 +61,8 @@ export const computeSplatParams = pattern => {
 
     // Named parameters
     if (seg.startsWith(':')) {
-      if (r >= routeSegs.length) return {};  // missing segment
+      if (r >= routeSegs.length) { return {};  // missing segment
+}
       const name = seg.slice(1);
       params[name] = routeSegs[r++];
       continue;
@@ -111,15 +112,17 @@ export const compileSelector = (selector) => {
   const selectorParser = /(?:(^|#|\.)([^#.[\]]+))|(\[(.+?)(?:\s*=\s*("|'|)((?:\\["'\]]|.)*?)\5)?\])/g
   const selectorCache = {}
 
-  let match
-    , tag = 'div'
+  let match;
+  let tag = 'div';
 
   const classes = []
-    , attrs = {}
+  const attrs = {}
 
+  // biome-ignore lint/suspicious/noAssignInExpressions: can be improved, legacy code.
   while ((match = selectorParser.exec(selector))) {
-    const type = match[1]
-      , value = match[2]
+    const type = match[1];
+    const value = match[2];
+
     if (type === '' && value !== '') {
       tag = value
     } else if (type === '#') {
@@ -128,13 +131,15 @@ export const compileSelector = (selector) => {
       classes.push(value)
     } else if (match[3][0] === '[') {
       let attrValue = match[6]
-      if (attrValue) attrValue = attrValue.replace(/\\(["'])/g, '$1').replace(/\\\\/g, '\\')
-      if (match[4] === 'class') classes.push(attrValue)
-      else attrs[match[4]] = attrValue === '' ? attrValue : attrValue || true
+      if (attrValue) { attrValue = attrValue.replace(/\\(["'])/g, '$1').replace(/\\\\/g, '\\') }
+      if (match[4] === 'class') { classes.push(attrValue) }
+      else { attrs[match[4]] = attrValue === '' ? attrValue : attrValue || true }
     }
   }
-  if (classes.length > 0) attrs.className = classes.join(' ')
-  return selectorCache[selector] = { tag, attrs }
+  if (classes.length > 0) { attrs.className = classes.join(' ') }
+
+  selectorCache[selector] = { tag, attrs }
+  return selectorCache[selector]
 }
 
 /**
@@ -150,7 +155,7 @@ export const compileSelector = (selector) => {
 export const component = (view, attrs, ...children) => {
   const lifecycleMethods = ["oninit", "oncreate", "onbeforeupdate", "onupdate", "onbeforeremove", "onremove"];
 
-  let vnode = {
+  const vnode = {
     attrs: {},
     children,
     dom: undefined,
@@ -193,8 +198,8 @@ export const component = (view, attrs, ...children) => {
 
   /*  Injects a callback inside the vnode with the given name (used in the dom callback) */
   function injectDom(view) {
-    if (!view || typeof view !== "object") return;
-    if (!view.tag) return;
+    if (!view || typeof view !== "object") { return; }
+    if (!view.tag) { return; }
 
     view.attrs.dom = dom;
   }
@@ -204,7 +209,7 @@ export const component = (view, attrs, ...children) => {
     if (isAttrs(attrs)) {
       Object.assign(vnode.attrs, attrs);
     } else {
-      if (attrs !== undefined) vnode.children.unshift(attrs);
+      if (attrs !== undefined) { vnode.children.unshift(attrs); }
     }
 
     // Call the user’s component factory (or vnode constructor).
@@ -213,11 +218,11 @@ export const component = (view, attrs, ...children) => {
       vnode.state = view.apply(vnode, [{ ...vnode }]);
 
       // Forward lifecycle method inside attributes (used to override methods outside components)
-      Object.keys(vnode.attrs).forEach(attr => {
+      for(const attr of Object.keys(vnode.attrs)) {
         if (lifecycleMethods.some(method => method === attr)) {
           vnode.state[attr] = vnode.attrs[attr];
         }
-      });
+      }
     } else {
       vnode.state = view
       vnode.tag = { view: view.view };
@@ -239,13 +244,13 @@ export const component = (view, attrs, ...children) => {
       /* This `data` return needs to be diffed in order to get only the attrs and not the children */
 
       // TODO: THIS IS DUE TO A PROBLEM WITH CHILDREN FILTERING (QUICK FIX WITH 0 objects)
-      Object.entries(data).forEach(([key, value]) => {
-        if(value instanceof s.View) return;
+      for(const [key, value] of Object.entries(data)) {
+        if(value instanceof s.View) { return; }
 
         if (key !== '0') {
           vnode.attrs[key] = value
         }
-      });
+      }
 
       const components = vnode.state.view.call(
         context(vnode.state.view, vnode),
@@ -284,9 +289,9 @@ export const component = (view, attrs, ...children) => {
  * @returns {Object}            A new flattened object.
  */
 export const flattenObj = (obj, prefix = "") => {
-  if (!obj) return {};
+  if (!obj) { return {}; }
   const res = {};
-  Object.keys(obj).forEach((key) => {
+  for(const key of Object.keys(obj)) {
     const v = obj[key];
     if (typeof v === "object" && v !== null) {
       Object.assign(
@@ -296,6 +301,6 @@ export const flattenObj = (obj, prefix = "") => {
     } else {
       res[prefix ? `${prefix}[${key}]` : key] = v;
     }
-  });
+  }
   return res;
 }
