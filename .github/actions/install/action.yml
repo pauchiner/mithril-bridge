@@ -3,16 +3,17 @@ description: Install the toolchain and dependencies
 
 runs:
   using: "composite"
-  shell: "bash"
 
   steps:
     - name: Setup Node.js
       uses: actions/setup-node@v4
+      shell: "bash"
       with:
         node-version: lts/*
 
     - name: Cache NPM modules
       uses: actions/cache@v3
+      shell: "bash"
       with:
         path: ~/.npm
         key: ${{ runner.os }}-npm-${{ hashFiles('**/package-lock.json') }}
@@ -20,4 +21,5 @@ runs:
           ${{ runner.os }}-npm-
 
     - name: Install dependencies
+      shell: "bash"
       run: npm ci
