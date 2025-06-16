@@ -1,12 +1,17 @@
 name: Install Repo
 description: Install the toolchain and dependencies
 
+inputs:
+  GITHUB_TOKEN:
+    description: 'GitHub Personal Access Token (with repo scope)'
+    required: true
+
 runs:
   using: composite
   steps:
     - name: Setup Git Credentials
       shell: bash
-      run: export GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}}
+      run: export GITHUB_TOKEN=${{inputs.GITHUB_TOKEN}}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4

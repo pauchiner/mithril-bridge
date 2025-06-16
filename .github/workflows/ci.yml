@@ -13,7 +13,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
         with:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Lint
         run: npm run lint
@@ -28,7 +28,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
         with:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Test
         run: npm test
@@ -44,7 +44,7 @@ jobs:
       - name: Install
         uses: ./.github/actions/install
         with:
-          GH_PAT: ${{ secrets.GH_PAT }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Build minified version
         run: npm run build
