@@ -1,4 +1,4 @@
-import type {View, Component, Children, Http} from 'sin';
+import type {Component, Http} from 'sin/types';
 
 /** This represents a key-value mapping linking routes to components. */
 interface RouteDefs {
@@ -21,7 +21,7 @@ interface Route {
   /** Creates application routes and mounts Components and/or RouteResolvers to a DOM element. */
   (element: HTMLElement, defaultRoute: string, routes: RouteDefs): void;
   /** Redirects to a matching route or to the default route if no matching routes can be found. */
-    set(path: string, params?: Object, options?: RouteOptions): void;
+  set(path: string, params?: Object, options?: RouteOptions): void;
   /** Returns the last fully resolved routing path, without the prefix. */
   get(): string;
   /** Defines a router prefix which is a fragment of the URL that dictates the underlying strategy used by the router. */
@@ -29,15 +29,10 @@ interface Route {
   /** 
    * @summary This Component renders a link <a href> that will use the current routing strategy */
   Link: any;
-  /**
-   * @todo this function is not binded with sin.js, it will throw an error
-   *
-   * @summary Returns the named parameter value from the current route. */
+  /** @summary Returns the named parameter value from the current route. */
   param(name: string): string;
-  /**
-   * @todo this function is not binded with sin.js, it will throw an error
-   * @summary Gets all route parameters. */
-  param(): any;
+  /** @summary Gets all route parameters. */
+  param(): Object;
 	}
 
 interface Redraw {
@@ -50,169 +45,34 @@ interface Redraw {
 }
 
 declare class Mithril {
-    /**
-     * Global Window Object
-     */
+    /** Global Window Object */
     static readonly window: Window & typeof globalThis;
-    /**
-      * Scroll Restoration
-      */
-    static readonly scroll: boolean;
-    /**
-     * Check server
-     */
-    static readonly is: {
-        /**
-         * Whether or not code is executing on server.
-         */
-        server: boolean;
-    };
-    /**
-     * Redrawing
-     */
-    static readonly redrawing: boolean;
-    /**
-     * JSX
-     */
-    static jsx: View;
-    /**
-     * Delay redraw or operation.
-     *
-     * @example
-     *
-     * // For in that sleep of death...
-     * await sleep(2000)
-     * // What dreams my come?
-     */
-    static sleep(x: number): Promise<number>;
-    /**
-     * Mithril Redraw
-     */
-    static redraw: Redraw;
-    /**
-     * Mithril Style
-     *
-     * Set the base `<style>` which sin uses.
-     *
-     * @example
-     *
-     * const style = document.createElement('style');
-     *
-     * m.style(style) // => HTMLStyleElement
-     *
-     * // Omitting parameter returns current <style> sin is using
-     * m.style() // => HTMLStyleElement
-     */
-    static style: (element?: HTMLStyleElement) => HTMLStyleElement;
-    /**
-     * ### Events
-     *
-     * @example
-     *
-     * const sinned = m.event(x => console.log(x))
-     *
-     * m.observe('repent')
-     */
-    static event<T = any>(cb?: (x: T) => void): {
-        /**
-         * Observe event (Returns an unobserver callback function)
-         */
-        observe: (x: any, once: any) => () => boolean;
-    };
-    /**
-     * Routing
-     */
+    /** Renders a template to the DOM. */
+    static render (element: Element, vnodes: Array<Component>): void;
+    /** Activates a component, enabling it to autoredraw on user events */
+    static mount (element: Element, component: Component): void;
+    /** Navigate between "pages" within an application */
     static route: Route;
-    /**
-     * HTTP utility for requests
-     *
-     * @example
-     *
-     * s.request({
-     *  url: '/api/path', 
-     *  method: 'GET',
-     *  redraw: true,
-     *  responseType: 'json',
-     *  json: 'application/json',
-     *  query: {},
-     *  body: {},
-     *  user: '',
-     *  pass: '',
-     *  headers: {},
-     *  timeout: 0,
-     *  config: (xhr) => {},
-     * })
-     */
+    /** Makes XHR (aka AJAX) requests, and returns a promise */
     static request: Http;
-    /**
-     * DOM Event listener - forwarded to `addEventListener`
-     *
-     * @example
-     *
-     * const { dom } = m("button", 'Click for atonement!');
-     *
-     * m.on(dom, 'click', (e) => {
-     *
-     *  // In the den of sin!
-     *
-     * }, {
-     *  passive: true
-     * })
-     */
-    static on: {
-        <T extends HTMLElement, K extends keyof WindowEventMap = keyof WindowEventMap>(
-        /**
-         * The DOM Element listener will be attached
-         */
-        target: T, 
-        /**
-         * The event name
-         */
-        event: K, 
-        /**
-         * The listener callback function
-         */
-        listener: (this: Window, event: WindowEventMap[K]) => any, 
-        /**
-         * Event Options
-         */
-        options?: boolean | AddEventListenerOptions): void;
-    };
-    /**
-     * Forgiving HTML or SVG string forms into unescaped HTML or SVG.
-     *
-     * > Unsanitized user input is **Forbidden!**
-     *
-     * @example
-     *
-     * m.trust(`<h1>Woe to the wicked!</h1>`)
-     */
+    /** Turns a string of the form ?a=1&b=2 to an object **/
+    static buildQuerystring(string: string): Object;
+    /** Turns a string of the form ?a=1&b=2 to an object */
+    static parseQuerystring(query: Object): string;
+    /** Turns a path template and a parameters object into a string of form /path/user?a=1&b=2 **/
+    static buildPathname(path: string, query: Object): string;
+    /** Turns a string of the form /path/user?a=1&b=2 to an object **/
+    static queryPathname(url: string): Object;
+    /** Turns an HTML or SVG string into unescaped HTML or SVG. Do not use m.trust on unsanitized user input. */
     static trust<T extends HTMLElement>(strings: string, ...values: string[]): T;
-    /**
-     * Error
-     */
-    static error(): Children;
-}
-
-declare namespace M {
-  const View: View;
-  const Component: Component;
-
-  const Redraw: Redraw;
-  const Request: Http;
-  const Route: Route;
-  /*
-    const Live: Live;
-    const Context: Context;
-
-    const Render: Render;
-    const Mount: Mount;
-    const CSS: CSS;
-    */
+    /** Updates the DOM after a change in the application data layer. */
+    static redraw: Redraw;
+    /** Returns a shallow-cloned object with lifecycle attributes and any given custom attributes omitted. */
+    static censor(object: Object, values: string[]): Object;
 }
 
 declare type Identity<T> = T;
 declare const m: Identity<typeof Mithril> & Component;
 declare module '@sin/mithril';
 
-export { M, m as default };
+export { m as default };

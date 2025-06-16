@@ -4,7 +4,7 @@
   "description": "An abstraction layer to use mithril with sin internally.",
   "version": "0.1.0",
   "type": "module",
-  "types": "/src/types.d.ts",
+  "types": "src/types.d.ts",
   "main": "src/index.js",
   "scripts": {
     "dev": "vite",
