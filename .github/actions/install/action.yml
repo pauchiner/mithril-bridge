@@ -1,19 +1,12 @@
 name: Install Repo
 description: Install the toolchain and dependencies
 
-inputs:
-  GH_PAT:
-    description: 'GitHub Personal Access Token (with repo scope)'
-    required: true
-
 runs:
   using: composite
   steps:
     - name: Setup Git Credentials
       shell: bash
-      run: |
-        git config --global url."https://${{ inputs.GH_PAT }}@github.com/".insteadOf "git@github.com:"
-        git config --global url."https://${{ inputs.GH_PAT }}@github.com/".insteadOf "ssh://git@github.com/"
+      run: export GITHUB_TOKEN=${{secrets.GITHUB_TOKEN}}
 
     - name: Setup Node.js
       uses: actions/setup-node@v4
