@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'vitest';
-import m from '../src/index';
+import m from '../src/index.js';
 
 describe('m.buildPathname', () => {
   it('builds a pathname from an object with only pathname', () => {

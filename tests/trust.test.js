@@ -1,5 +1,5 @@
 import {describe, it, expect} from 'vitest';
-import m from '../src/index';
+import m from '../src/index.js';
 
 describe('m.trust', () => {
   it('should create a trusted vnode with raw HTML', () => {

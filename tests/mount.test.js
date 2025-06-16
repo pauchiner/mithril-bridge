@@ -1,5 +1,5 @@
 import {describe, beforeEach, afterEach, test, expect, vi} from 'vitest';
-import m from '../src/index';
+import m from '../src/index.js';
 
 describe('m.mount', () => {
   let warnSpy;

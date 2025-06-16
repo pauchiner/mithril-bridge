@@ -1,5 +1,5 @@
 import {describe, beforeEach, afterEach, test, expect, vi} from 'vitest';
-import m from '../src/index';
+import m from '../src/index.js';
 import s from 'sin';
 
 describe('m.route', () => {
@@ -80,7 +80,7 @@ describe('m.route', () => {
     };
 
     // Initialize routing with a route that has a parameter placeholder
-    // Default route doesn’t matter here; we’ll set the hash manually
+    // Default route doesn't matter here; we'll set the hash manually
     m.route(document.body, '/user/42', {
       '/user/:id': User
     });
@@ -184,7 +184,7 @@ describe('m.route.Link', () => {
 
     const anchor = document.body.querySelector('a');
     expect(anchor).not.toBeNull();
-    expect(anchor.getAttribute('href')).toBe('/foo/bar');
+    expect(anchor.getAttribute('href')).toBe('#!/foo/bar');
     expect(anchor.getAttribute('class')).toBe('nav-link');
     expect(anchor.textContent).toBe('Navigate');
   });
@@ -277,7 +277,7 @@ describe.skip('m.route.SKIP', () => {
   });
 
   test('using SKIP as a resolver return value does not change the view', () => {
-    // Set up two components: A and B. B’s onmatch will return m.route.SKIP
+    // Set up two components: A and B. B's onmatch will return m.route.SKIP
     const A = {
       view: () => m('div', 'Component A')
     };

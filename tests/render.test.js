@@ -1,5 +1,5 @@
 import {describe, afterEach, beforeEach, test, expect, vi} from 'vitest';
-import m from '../src/index';
+import m from '../src/index.js';
 
 describe('m.render', () => {
   let warnSpy;
@@ -79,7 +79,6 @@ describe('m.render', () => {
     m.render(document.body, vnodeWithAttrs);
 
     // innerHTML will include the class and data-test attributes.
-    // Note: in jsdom, event listeners (onclick) do not show up as attributes in innerHTML.
     const html = document.body.innerHTML;
 
     // Check that the <button> tag contains class="btn primary" and data-test="my-button"
