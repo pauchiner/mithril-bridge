@@ -134,17 +134,28 @@ describe('m.route.set', () => {
     m.route.set('/another');
     expect(window.location.hash).toBe('#!/another');
   });
+
+  test('handle params correctly', () => {
+    m.route.set('/files/:id', {id: '1234'});
+    expect(window.location.hash).toBe('#!/files/1234');
+  });
+
+  test('handle the title option', () => {
+    m.route.set('/example', {}, {title: "Example"});
+    expect(document.title).toBe("Example");
+    expect(window.location.hash).toBe('#!/example');
+  });
 });
 
 describe('m.route.get', () => {
   beforeEach(() => {
     window.location.hash = '';
-    m.route.prefix("#!");
+    m.route.prefix('#!');
   });
 
   afterEach(() => {
     window.location.hash = '';
-    m.route.prefix("#!");
+    m.route.prefix('#!');
   });
 
   test('returns empty string when no hash is present', () => {
@@ -319,18 +330,18 @@ describe.skip('m.route.SKIP', () => {
 describe('m.route.prefix', () => {
   beforeEach(() => {
     window.location.hash = '';
-  })
+  });
 
   afterEach(() => {
     window.location.hash = '';
-  })
+  });
 
   test('defaults to "#!"', () => {
     expect(m.route.prefix()).toBe('#!');
   });
 
   test('can be updated"', () => {
-    m.route.prefix("example")
+    m.route.prefix('example');
     expect(m.route.prefix()).toBe('example');
   });
 });

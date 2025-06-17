@@ -100,16 +100,16 @@ m.route = (_dom, path, routes) => {
   )
 
 }
+m.route.set = (path, params = null, options = {}) => {
+  const pathname = params !== null ? m.buildPathname(path, params) : path;
 
-m.route.set = (path, params, options) => {
-  // Setup path and options
-  s.route(path, {
-    replace: options?.replace ?? false,
-    state: options?.state ?? {}
-  })
-  // Add params if needed
-  if (params) {
-    s.route.query.set(params);
+  s.route(pathname, {
+    replace: options.replace ?? false,
+    state: options.state ?? {}
+  });
+
+  if(options.title) {
+    document.title = options.title;
   }
 }
 
