@@ -2,6 +2,11 @@ import {describe, it, expect} from 'vitest';
 import m from '../src/index.js';
 
 describe('m.trust', () => {
+  it('should return on undefined html', () => {
+    const vnode = m.trust();
+    expect(vnode).toBeUndefined();
+  });
+
   it('should create a trusted vnode with raw HTML', () => {
     const html = '<span>Trusted Content</span>';
     const vnode = m.trust(html);
