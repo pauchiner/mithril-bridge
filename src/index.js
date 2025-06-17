@@ -120,14 +120,15 @@ m.route.get = () => {
 
   // extract the data needed
   const route = s.route.location.hash;
-  const prefix = "#!"
+  const prefix = m.route.prefix();
 
   // if the route containes contains prefix, parse it.
-  if (route.startsWith(prefix)) {
+  if (prefix !== '' && route.startsWith(prefix)) {
     return route.slice(prefix.length);
   }
 
-  return route;
+  // parse the default prefix
+  return route.slice("#".length);
 }
 
 m.route.Link = {
@@ -137,7 +138,7 @@ m.route.Link = {
     //
     // We don't strip the other parameters because for convenience we
     // let them be specified in the selector as well.
-    
+
     const child = m(
       vnode.attrs.selector || "a",
       m.censor(vnode.attrs, ["options", "params", "selector", "onclick"]),
