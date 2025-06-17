@@ -1,4 +1,4 @@
-import { defineConfig } from 'vite';
+import {defineConfig} from 'vite';
 
 // This is only for the `pnpm dev` on the exampl folder
 export default defineConfig({
@@ -9,6 +9,6 @@ export default defineConfig({
     }
   },
   resolve: {
-    conditions: ['import', 'module', 'default'],
-  },
+    conditions: ['import', 'module', 'default']
+  }
 });

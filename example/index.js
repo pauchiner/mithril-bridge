@@ -17,10 +17,10 @@ const Content = {
         }
       },
       [
-        m('section', { style: { marginBottom: '1rem' } }, [
+        m('section', {style: {marginBottom: '1rem'}}, [
           m(
             'h1',
-            { style: { marginBottom: '1rem', fontSize: '2.4rem' } },
+            {style: {marginBottom: '1rem', fontSize: '2.4rem'}},
             'Mithril + Sin'
           ),
           m('p', `Version ${module.version}`)
@@ -61,7 +61,7 @@ const Footer = {
         }
       },
       [
-        m(Link, { href: 'https://mithril.js.org/simple-application.html' }, [
+        m(Link, {href: 'https://mithril.js.org/simple-application.html'}, [
           m(
             'svg',
             {
@@ -80,7 +80,7 @@ const Footer = {
           ),
           m('span', 'Learn')
         ]),
-        m(Link, { href: 'https://mithril.js.org/examples.html' }, [
+        m(Link, {href: 'https://mithril.js.org/examples.html'}, [
           m(
             'svg',
             {
@@ -99,7 +99,7 @@ const Footer = {
           ),
           m('span', 'Examples')
         ]),
-        m(Link, { href: 'https://mithril.js.org' }, [
+        m(Link, {href: 'https://mithril.js.org'}, [
           m(
             'svg',
             {
@@ -112,7 +112,7 @@ const Footer = {
             [
               m(
                 'g',
-                { 'clip-path': 'url(#a)' },
+                {'clip-path': 'url(#a)'},
                 m('path', {
                   'fill-rule': 'evenodd',
                   'clip-rule': 'evenodd',
@@ -124,8 +124,8 @@ const Footer = {
                 'defs',
                 m(
                   'clipPath',
-                  { id: 'a' },
-                  m('path', { fill: '#fff', d: 'M0 0h16v16H0z' })
+                  {id: 'a'},
+                  m('path', {fill: '#fff', d: 'M0 0h16v16H0z'})
                 )
               )
             ]
@@ -169,5 +169,5 @@ const Link = () => {
 };
 
 m.route(document.body, '/', {
-  '/': { view: () => m('main', [m(Content), m(Footer)]) }
+  '/': {view: () => m('main', [m(Content), m(Footer)])}
 });

@@ -12,13 +12,13 @@ export default defineConfig({
         find: /^sin$/,
         replacement: resolve(__dirname, 'node_modules/sin/src/index.js')
       }
-    ],
+    ]
   },
   test: {
     environment: 'happy-dom',
     coverage: {
       provider: 'v8',
-      include: ['src/**'],
-    },
+      include: ['src/**']
+    }
   }
 });

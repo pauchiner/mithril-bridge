@@ -1,7 +1,6 @@
 import {describe, it, expect} from 'vitest';
 import m from '../src/index.js';
 
-
 describe('m.censor', () => {
   it('removes all lifecycle hooks and `key`, but keeps other attributes', () => {
     const original = {
