@@ -139,14 +139,24 @@ describe('m.route.set', () => {
 describe('m.route.get', () => {
   beforeEach(() => {
     window.location.hash = '';
+    m.route.prefix("#!");
   });
 
   afterEach(() => {
     window.location.hash = '';
+    m.route.prefix("#!");
   });
 
   test('returns empty string when no hash is present', () => {
     // Depending on implementation, adjust expectation if get() returns undefined or "/".
+    expect(m.route.get()).toBe('/');
+  });
+
+  test('returns route without the default prefix', () => {
+    // Depending on implementation, adjust expectation if get() returns undefined or "/".
+    window.location.hash = '/';
+    window.dispatchEvent(new HashChangeEvent('hashchange'));
+
     expect(m.route.get()).toBe('/');
   });
 
@@ -307,7 +317,20 @@ describe.skip('m.route.SKIP', () => {
 });
 
 describe('m.route.prefix', () => {
+  beforeEach(() => {
+    window.location.hash = '';
+  })
+
+  afterEach(() => {
+    window.location.hash = '';
+  })
+
   test('defaults to "#!"', () => {
-    expect(m.route.prefix).toBe('#!');
+    expect(m.route.prefix()).toBe('#!');
+  });
+
+  test('can be updated"', () => {
+    m.route.prefix("example")
+    expect(m.route.prefix()).toBe('example');
   });
 });
