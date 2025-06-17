@@ -14,14 +14,15 @@ This bridge aims to provide a 1:1 compatibility layer between Mithril and Sin, a
 
 ### Core Virtual DOM API
 * [X] `m()` hyperscript: map `m(tag, attrs, children)` to Sin VDOM
-* [ ] Vnode normalization: `attrs`, `children`, `state`, `dom`, `instance`
 * [X] Fragment support (`[]`) and text-node handling
+* [~] Vnode normalization: `attrs`, `children`, `state`, `dom`, `instance`
 * [X] `m.mount(root, component)` via Sin's mount API
 * [X] `m.render(root, vnode)`: client-side render without routing
 * [X] `m.redraw()` shim and auto-redraw on events/timers
 * [X] Support for key-based list diffing (Mithril's `key` attribute)
 * [X] `m.trust` HTML trust: render raw HTML without escaping
 * [X] `m.censor` HTML escape: sanitize or escape text nodes to prevent XSS
+* [ ] Handle optimistic updates instead of reloading the whole page
 
 ### Components & Lifecycle
 * [X] Object-components: `view`, `oninit`, `oncreate`, `onupdate`, `onbeforeremove`, `onremove`
@@ -40,8 +41,8 @@ This bridge aims to provide a 1:1 compatibility layer between Mithril and Sin, a
 * [X] `m.route(root, defaultRoute, routes)` (Currently we dont support mounting to another that the document.body)
 * [X] Dynamic segments (`/:param`) and splat (`*`) routes
 * [X] Query-string parsing/building
-* [ ] Route resolvers: `onmatch`, `resolve`
 * [X] `m.route.param(name)`: retrieve route parameter values
+* [ ] Route resolvers: `onmatch`, `resolve`
 * [ ] `m.route.SKIP` constant: skip redraw in specific scenarios
 * [X] Route redraws and route.link behavior
 
@@ -54,8 +55,11 @@ This bridge aims to provide a 1:1 compatibility layer between Mithril and Sin, a
 * [ ] Stream combinators: `map`, `scan`, `merge`, `mergeAll`
 * [ ] Stream-lifecycle integration (auto cleanup)
 
+### SSR
+* [ ]  Build the ssr module to opt-in
+
 ### Testing & QA
-* [ ] Unit tests for each `m.*` shim
+* [~] Unit tests for each `m.*` shim
 * [X] Integration tests with sample Mithril apps
 
 ## Quick Start
