@@ -141,8 +141,8 @@ describe('m.route.set', () => {
   });
 
   test('handle the title option', () => {
-    m.route.set('/example', {}, {title: "Example"});
-    expect(document.title).toBe("Example");
+    m.route.set('/example', {}, {title: 'Example'});
+    expect(document.title).toBe('Example');
     expect(window.location.hash).toBe('#!/example');
   });
 });

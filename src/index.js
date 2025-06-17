@@ -62,36 +62,41 @@ m.route = (_dom, path, routes) => {
   }
 
   // Build a map of route → resolver function
-  const resolvers = Object
-    .entries(routes)
-    .reduce((map, [route, component]) => {
-
-      if (route.includes("...")) {
-        map[route] = () => {
-          const params = computeSplatParams(route);
-          const current = m.route.get();
-
-          if (params && Object.entries(params).length > 0 && typeof m._PARAMS[current] !== 'object') {
-            m._PARAMS[current] = params;
-          }
-
-          return m(component, params);
-        };
-        return map;
-      }
-
-      map[route] = (attrs) => {
-        const params = m.censor(attrs, ["scroll"]);
+  const resolvers = Object.entries(routes).reduce((map, [route, component]) => {
+    if (route.includes('...')) {
+      map[route] = () => {
+        const params = computeSplatParams(route);
         const current = m.route.get();
 
-        if (params && Object.entries(params).length > 0 && typeof m._PARAMS[current] !== 'object') {
+        if (
+          params &&
+          Object.entries(params).length > 0 &&
+          typeof m._PARAMS[current] !== 'object'
+        ) {
           m._PARAMS[current] = params;
         }
 
-        return m(component, params)
+        return m(component, params);
       };
       return map;
-    }, {});
+    }
+
+    map[route] = attrs => {
+      const params = m.censor(attrs, ['scroll']);
+      const current = m.route.get();
+
+      if (
+        params &&
+        Object.entries(params).length > 0 &&
+        typeof m._PARAMS[current] !== 'object'
+      ) {
+        m._PARAMS[current] = params;
+      }
+
+      return m(component, params);
+    };
+    return map;
+  }, {});
 
   // Add a catch-all that sends you back to defaultPath
   resolvers['/*'] = () => {
@@ -100,12 +105,12 @@ m.route = (_dom, path, routes) => {
 
   return s.mount((_attrs, _children, context) =>
     s(() => () => {
-      m._REFRESH = context.reload
-      return () => context.route(resolvers)
+      m._REFRESH = context.reload;
+      return () => context.route(resolvers);
     })
-  )
+  );
+};
 
-}
 m.route.set = (path, params = null, options = {}) => {
   const pathname = params !== null ? m.buildPathname(path, params) : path;
 
@@ -114,10 +119,10 @@ m.route.set = (path, params = null, options = {}) => {
     state: options.state ?? {}
   });
 
-  if(options.title) {
+  if (options.title) {
     document.title = options.title;
   }
-}
+};
 
 m.route.get = () => {
   if (s.route.location.hash === '') {
@@ -271,7 +276,6 @@ m.parseQueryString = query => {
     return {};
   }
   if (query.charAt(0) === '?') {
-    // biome-ignore lint/style/noParameterAssign: mithril legacy code, can be improved.
     query = query.slice(1);
   }
 
