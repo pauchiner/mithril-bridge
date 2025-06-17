@@ -103,12 +103,10 @@ m.route = (_dom, path, routes) => {
     m.route.set(path);
   };
 
-  return s.mount((_attrs, _children, context) =>
-    s(() => () => {
-      m._REFRESH = context.reload;
-      return () => context.route(resolvers);
-    })
-  );
+  return s.mount((_attrs, _children, context) => {
+    m._REFRESH = context.reload;
+    return s('div', context.route(resolvers));
+  });
 };
 
 m.route.set = (path, params = null, options = {}) => {
