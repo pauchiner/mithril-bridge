@@ -6,10 +6,15 @@ import s from 'sin';
  * @param {*} x  - The value to test.
  * @returns {boolean}  True if `x` is a valid attrs object, false otherwise.
  */
-export const isAttrs = (x) => {
-  return x && typeof x === 'object' && x instanceof Date === false
-    && Array.isArray(x) === false && x instanceof s.View === false
-}
+export const isAttrs = x => {
+  return (
+    x &&
+    typeof x === 'object' &&
+    x instanceof Date === false &&
+    Array.isArray(x) === false &&
+    x instanceof s.View === false
+  );
+};
 
 /**
  * Merges two `class` attribute values (strings, arrays, or objects) into one.
@@ -22,8 +27,8 @@ export const mergeClass = (a, b) => {
   return {
     className: (a.className ? `${a.className} ` : '') + (b.className || ''),
     class: (a.class ? `${a.class} ` : '') + (b.class || '')
-  }
-}
+  };
+};
 
 /**
  * Retrieves the dynamic parameters for a “splat” route segment (e.g. `/foo/:rest.../bar`).
@@ -45,12 +50,14 @@ export const computeSplatParams = pattern => {
 
     // Splat parameters
     if (seg.startsWith(':') && seg.endsWith('...')) {
-      const name = seg.slice(1, -3);              // "sections"
+      const name = seg.slice(1, -3); // "sections"
       const remainingPatterns = patternSegs.length - p - 1;
       const available = routeSegs.length - r;
 
       // If too few segments to satisfy the rest of the pattern, no match
-      if (available < remainingPatterns) { return {}; }
+      if (available < remainingPatterns) {
+        return {};
+      }
 
       // Consume just enough to leave room for post-splat segments
       const splatCount = available - remainingPatterns;
@@ -61,8 +68,9 @@ export const computeSplatParams = pattern => {
 
     // Named parameters
     if (seg.startsWith(':')) {
-      if (r >= routeSegs.length) { return {};  // missing segment
-}
+      if (r >= routeSegs.length) {
+        return {}; // missing segment
+      }
       const name = seg.slice(1);
       params[name] = routeSegs[r++];
       continue;
@@ -76,13 +84,16 @@ export const computeSplatParams = pattern => {
   }
 
   // Only match if we've consumed *all* of both arrays
-  if (r === routeSegs.length && patternSegs.length === Object.keys(patternSegs).length) {
+  if (
+    r === routeSegs.length &&
+    patternSegs.length === Object.keys(patternSegs).length
+  ) {
     return params;
   }
 
   // No match
   return {};
-}
+};
 
 /**
  * Determines the proper `this` context for a component’s lifecycle methods.
@@ -96,7 +107,7 @@ export const context = (caller, vnode) => {
     return vnode.state;
   }
   return vnode;
-}
+};
 
 /**
  * Parses a CSS-style selector string into an object with tag, id, and class parts.
@@ -108,15 +119,16 @@ export const context = (caller, vnode) => {
  *   - `id` is extracted from `#…`
  *   - `className` is a space-separated list from `.` pieces.
  */
-export const compileSelector = (selector) => {
-  const selectorParser = /(?:(^|#|\.)([^#.[\]]+))|(\[(.+?)(?:\s*=\s*("|'|)((?:\\["'\]]|.)*?)\5)?\])/g
-  const selectorCache = {}
+export const compileSelector = selector => {
+  const selectorParser =
+    /(?:(^|#|\.)([^#.[\]]+))|(\[(.+?)(?:\s*=\s*("|'|)((?:\\["'\]]|.)*?)\5)?\])/g;
+  const selectorCache = {};
 
   let match;
   let tag = 'div';
 
-  const classes = []
-  const attrs = {}
+  const classes = [];
+  const attrs = {};
 
   // biome-ignore lint/suspicious/noAssignInExpressions: can be improved, legacy code.
   while ((match = selectorParser.exec(selector))) {
@@ -124,23 +136,30 @@ export const compileSelector = (selector) => {
     const value = match[2];
 
     if (type === '' && value !== '') {
-      tag = value
+      tag = value;
     } else if (type === '#') {
-      attrs.id = value
+      attrs.id = value;
     } else if (type === '.') {
-      classes.push(value)
+      classes.push(value);
     } else if (match[3][0] === '[') {
-      let attrValue = match[6]
-      if (attrValue) { attrValue = attrValue.replace(/\\(["'])/g, '$1').replace(/\\\\/g, '\\') }
-      if (match[4] === 'class') { classes.push(attrValue) }
-      else { attrs[match[4]] = attrValue === '' ? attrValue : attrValue || true }
+      let attrValue = match[6];
+      if (attrValue) {
+        attrValue = attrValue.replace(/\\(["'])/g, '$1').replace(/\\\\/g, '\\');
+      }
+      if (match[4] === 'class') {
+        classes.push(attrValue);
+      } else {
+        attrs[match[4]] = attrValue === '' ? attrValue : attrValue || true;
+      }
     }
   }
-  if (classes.length > 0) { attrs.className = classes.join(' ') }
+  if (classes.length > 0) {
+    attrs.className = classes.join(' ');
+  }
 
-  selectorCache[selector] = { tag, attrs }
-  return selectorCache[selector]
-}
+  selectorCache[selector] = {tag, attrs};
+  return selectorCache[selector];
+};
 
 /**
  * Wraps a user-defined Mithril-like component factory (or vnode descriptor)
@@ -153,7 +172,14 @@ export const compileSelector = (selector) => {
  * @returns {Object} A Mithril vnode descriptor.
  */
 export const component = (view, attrs, ...children) => {
-  const lifecycleMethods = ["oninit", "oncreate", "onbeforeupdate", "onupdate", "onbeforeremove", "onremove"];
+  const lifecycleMethods = [
+    'oninit',
+    'oncreate',
+    'onbeforeupdate',
+    'onupdate',
+    'onbeforeremove',
+    'onremove'
+  ];
 
   const vnode = {
     attrs: {},
@@ -165,14 +191,14 @@ export const component = (view, attrs, ...children) => {
     key: undefined,
     state: {},
     tag: undefined,
-    text: undefined,
+    text: undefined
   };
 
   function dom(element) {
     if (vnode.state.oncreate) {
       vnode.state.oncreate.call(context(vnode.state.oncreate, vnode), {
         ...vnode,
-        dom: element,
+        dom: element
       });
     }
 
@@ -190,7 +216,7 @@ export const component = (view, attrs, ...children) => {
       if (vnode.state.onremove) {
         vnode.state.onremove.call(context(vnode.state.onremove, vnode), {
           ...vnode,
-          dom: element,
+          dom: element
         });
       }
     };
@@ -198,39 +224,45 @@ export const component = (view, attrs, ...children) => {
 
   /*  Injects a callback inside the vnode with the given name (used in the dom callback) */
   function injectDom(view) {
-    if (!view || typeof view !== "object") { return; }
-    if (!view.tag) { return; }
+    if (!view || typeof view !== 'object') {
+      return;
+    }
+    if (!view.tag) {
+      return;
+    }
 
     view.attrs.dom = dom;
   }
 
-  function build(_attrs, _children, { ignore }) {
+  function build(_attrs, _children, {ignore}) {
     // Compute the component attributes
     if (isAttrs(attrs)) {
       Object.assign(vnode.attrs, attrs);
     } else {
-      if (attrs !== undefined) { vnode.children.unshift(attrs); }
+      if (attrs !== undefined) {
+        vnode.children.unshift(attrs);
+      }
     }
 
     // Call the user’s component factory (or vnode constructor).
-    if (typeof view === "function") {
+    if (typeof view === 'function') {
       vnode.tag = view;
-      vnode.state = view.apply(vnode, [{ ...vnode }]);
+      vnode.state = view.apply(vnode, [{...vnode}]);
 
       // Forward lifecycle method inside attributes (used to override methods outside components)
-      for(const attr of Object.keys(vnode.attrs)) {
+      for (const attr of Object.keys(vnode.attrs)) {
         if (lifecycleMethods.some(method => method === attr)) {
           vnode.state[attr] = vnode.attrs[attr];
         }
       }
     } else {
-      vnode.state = view
-      vnode.tag = { view: view.view };
+      vnode.state = view;
+      vnode.tag = {view: view.view};
     }
 
     // Setup vnode keys
     if (vnode.attrs?.key) {
-      vnode.key = vnode.attrs.key
+      vnode.key = vnode.attrs.key;
     }
 
     // Call `oninit` lifecycle if defined
@@ -240,15 +272,17 @@ export const component = (view, attrs, ...children) => {
 
     // Return the view‐function wrapper.
     // (Here we merge the attributes and children)
-    return (data) => {
+    return data => {
       /* This `data` return needs to be diffed in order to get only the attrs and not the children */
 
       // TODO: THIS IS DUE TO A PROBLEM WITH CHILDREN FILTERING (QUICK FIX WITH 0 objects)
-      for(const [key, value] of Object.entries(data)) {
-        if(value instanceof s.View) { return; }
+      for (const [key, value] of Object.entries(data)) {
+        if (value instanceof s.View) {
+          return;
+        }
 
         if (key !== '0') {
-          vnode.attrs[key] = value
+          vnode.attrs[key] = value;
         }
       }
 
@@ -258,7 +292,10 @@ export const component = (view, attrs, ...children) => {
       );
 
       // Handle the `onbeforeupdate` lifecycle
-      if (vnode.state.onbeforeupdate && typeof vnode.state.onbeforeupdate === 'function') {
+      if (
+        vnode.state.onbeforeupdate &&
+        typeof vnode.state.onbeforeupdate === 'function'
+      ) {
         ignore(vnode.state.onbeforeupdate() === false);
       }
 
@@ -271,15 +308,15 @@ export const component = (view, attrs, ...children) => {
       if (Array.isArray(components)) {
         components.forEach(injectDom);
       } else {
-        injectDom(components)
+        injectDom(components);
       }
 
       return components;
-    }
+    };
   }
 
-  return s(build)({ ...attrs, ...children });
-}
+  return s(build)({...attrs, ...children});
+};
 
 /**
  * Flattens a nested object into a single-level object by prefixing keys.
@@ -288,19 +325,18 @@ export const component = (view, attrs, ...children) => {
  * @param {string} [prefix=""]  - Prefix to prepend to all keys (no trailing dot).
  * @returns {Object}            A new flattened object.
  */
-export const flattenObj = (obj, prefix = "") => {
-  if (!obj) { return {}; }
+export const flattenObj = (obj, prefix = '') => {
+  if (!obj) {
+    return {};
+  }
   const res = {};
-  for(const key of Object.keys(obj)) {
+  for (const key of Object.keys(obj)) {
     const v = obj[key];
-    if (typeof v === "object" && v !== null) {
-      Object.assign(
-        res,
-        flattenObj(v, prefix ? `${prefix}[${key}]` : key)
-      );
+    if (typeof v === 'object' && v !== null) {
+      Object.assign(res, flattenObj(v, prefix ? `${prefix}[${key}]` : key));
     } else {
       res[prefix ? `${prefix}[${key}]` : key] = v;
     }
   }
   return res;
-}
+};
