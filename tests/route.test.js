@@ -38,7 +38,7 @@ describe('m.route', () => {
     // After initialization, the URL hash should be "#!/home"
     expect(window.location.hash).toBe('#!/home');
     // And document.body.innerHTML should be the Home component's rendered output
-    expect(document.body.innerHTML).toBe('<div>Home Page</div>');
+    expect(document.body.innerHTML).toBe('<div><div>Home Page</div></div>');
   });
 
   test('navigates to a different route when hash changes', async () => {
@@ -56,7 +56,7 @@ describe('m.route', () => {
 
     // Initially, we should be at Home
     expect(window.location.hash).toBe('#!/home');
-    expect(document.body.innerHTML).toBe('<div>Home</div>');
+    expect(document.body.innerHTML).toBe('<div><div>Home</div></div>');
 
     // Now simulate navigating to "#!/about"
     window.location.hash = '#!/about';
@@ -68,7 +68,7 @@ describe('m.route', () => {
 
     // After hashchange, it should render About
     expect(window.location.hash).toBe('#!/about');
-    expect(document.body.innerHTML).toBe('<div>About</div>');
+    expect(document.body.innerHTML).toBe('<div><div>About</div></div>');
   });
 
   test('passes route parameters to the component via m.route.param()', async () => {
@@ -87,14 +87,14 @@ describe('m.route', () => {
     });
 
     // The User component should read m.route.param('id') === "42"
-    expect(document.body.innerHTML).toBe('<p>User ID: 42</p>');
+    expect(document.body.innerHTML).toBe('<div><p>User ID: 42</p></div>');
 
     // Change to another user
     window.location.hash = '#!/user/7';
     window.dispatchEvent(new HashChangeEvent('hashchange'));
     await sleep(10);
 
-    expect(document.body.innerHTML).toBe('<p>User ID: 7</p>');
+    expect(document.body.innerHTML).toBe('<div><p>User ID: 7</p></div>');
   });
 
   test('navigating to an undefined route leaves the view unchanged', () => {
@@ -107,14 +107,14 @@ describe('m.route', () => {
     });
 
     expect(window.location.hash).toBe('#!/a');
-    expect(document.body.innerHTML).toBe('<div>A</div>');
+    expect(document.body.innerHTML).toBe('<div><div>A</div></div>');
 
     // Try to navigate to a route not in the table
     window.location.hash = '#!/c';
     window.dispatchEvent(new HashChangeEvent('hashchange'));
 
     // Since '/c' is undefined, the content should remain the same (A)
-    expect(document.body.innerHTML).toBe('<div>A</div>');
+    expect(document.body.innerHTML).toBe('<div><div>A</div></div>');
   });
 });
 
@@ -237,7 +237,7 @@ describe('m.route.param', () => {
     // After initialization, location.hash => #!/noparams
     expect(window.location.hash).toBe('#!/noparams');
     // The component rendered should show "foo=undefined"
-    expect(document.body.innerHTML).toBe('<div>foo=undefined</div>');
+    expect(document.body.innerHTML).toBe('<div><div>foo=undefined</div></div>');
   });
 
   test('extracts a single dynamic segment correctly', async () => {
@@ -258,7 +258,7 @@ describe('m.route.param', () => {
     await sleep(10);
 
     expect(m.route.param('id')).toBe('42');
-    expect(document.body.innerHTML).toBe('<p>User ID: 42</p>');
+    expect(document.body.innerHTML).toBe('<div><p>User ID: 42</p></div>');
 
     // Change to another id
     window.location.hash = '#!/user/99';
@@ -266,7 +266,7 @@ describe('m.route.param', () => {
     await sleep(10);
 
     expect(m.route.param('id')).toBe('99');
-    expect(document.body.innerHTML).toBe('<p>User ID: 99</p>');
+    expect(document.body.innerHTML).toBe('<div><p>User ID: 99</p></div>');
   });
 
   test('handles multiple dynamic segments in the route', () => {
@@ -284,7 +284,7 @@ describe('m.route.param', () => {
 
     expect(m.route.param('orderId')).toBe('123');
     expect(m.route.param('itemId')).toBe('456');
-    expect(document.body.innerHTML).toBe('<div>order=123, item=456</div>');
+    expect(document.body.innerHTML).toBe('<div><div>order=123, item=456</div></div>');
   });
 });
 
