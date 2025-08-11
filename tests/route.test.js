@@ -284,7 +284,9 @@ describe('m.route.param', () => {
 
     expect(m.route.param('orderId')).toBe('123');
     expect(m.route.param('itemId')).toBe('456');
-    expect(document.body.innerHTML).toBe('<div><div>order=123, item=456</div></div>');
+    expect(document.body.innerHTML).toBe(
+      '<div><div>order=123, item=456</div></div>'
+    );
   });
 });
 

@@ -20,22 +20,6 @@ describe('m.render', () => {
     expect(document.body.innerHTML).toBe('<h1>hello world</h1>');
   });
 
-  test('mounting to a non-body element emits a warning but still renders into document.body', () => {
-    const fakeContainer = document.createElement('div');
-    // Call m.render with fakeContainer instead of document.body
-    m.render(fakeContainer, m('p', 'mounted to wrong element'));
-
-    // Should have warned exactly once
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy).toHaveBeenCalledWith(
-      'mounting to other than document.body is not supported!!!'
-    );
-
-    // Even though we passed fakeContainer, the implementation still does s.mount(...)
-    // which (in our environment) ends up writing into <body>.
-    expect(document.body.innerHTML).toBe('<p>mounted to wrong element</p>');
-  });
-
   test('redraw callback to a non-body element emits a warning but still renders into document.body', () => {
     m.render(document.body, m('h1', 'hello world'), () =>
       console.log('callback')

@@ -24,24 +24,6 @@ describe('m.mount', () => {
     expect(document.body.innerHTML).toBe('<h1>Hello, world!</h1>');
   });
 
-  test('mounting to a non-body element emits a warning but still renders to document.body', () => {
-    const fakeContainer = document.createElement('div');
-    const MsgComp = {
-      view: () => m('p', 'Mounted to wrong element')
-    };
-
-    m.mount(fakeContainer, MsgComp);
-
-    // Warning should have been called once with the exact message
-    expect(warnSpy).toHaveBeenCalledTimes(1);
-    expect(warnSpy).toHaveBeenCalledWith(
-      'mounting to other than document.body is not supported!!!'
-    );
-
-    // The content should still end up in document.body
-    expect(document.body.innerHTML).toBe('<p>Mounted to wrong element</p>');
-  });
-
   test('mounting a component twice replaces the old content', () => {
     const FirstComp = {
       view: () => m('span', 'First')

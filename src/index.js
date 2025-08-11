@@ -35,27 +35,19 @@ function m(tag, attrs, ...children) {
 
 // Render
 m.render = (element, vnodes, redraw) => {
-  if (element && element !== window?.document?.body) {
-    console.warn('mounting to other than document.body is not supported!!!');
-  }
-
   if (redraw) {
     console.warn('redraw callbacks are not currently supported!!!');
   }
-
-  return s.mount(() => vnodes);
+  return s.mount(element, () => vnodes);
 };
 
 // Mount
 m.mount = (element, component) => {
-  if (element && element !== window?.document?.body) {
-    console.warn('mounting to other than document.body is not supported!!!');
-  }
-  return s.mount(() => m(component));
+  return s.mount(element, () => m(component));
 };
 
 // Route
-m.route = (_dom, path, routes) => {
+m.route = (dom, path, routes) => {
   // If there's no hash in the URL yet, jump to our default path
   if (!window.location.hash) {
     m.route.set(path);
@@ -103,7 +95,7 @@ m.route = (_dom, path, routes) => {
     m.route.set(path);
   };
 
-  return s.mount((_attrs, _children, context) => {
+  return s.mount(dom, (_attrs, _children, context) => {
     m._REFRESH = context.reload;
     return s('div', context.route(resolvers));
   });
