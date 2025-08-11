@@ -202,16 +202,6 @@ export const component = (view, attrs, ...children) => {
       });
     }
 
-    /*
-    return async () => {
-      if (vnode.state.onbeforeremove) {
-        await vnode.state.onbeforeremove.call(context(vnode.state.onbeforeremove, vnode), {
-          ...vnode,
-          dom: element,
-        });
-      }
-    */
-
     return () => {
       if (vnode.state.onremove) {
         vnode.state.onremove.call(context(vnode.state.onremove, vnode), {
@@ -222,15 +212,9 @@ export const component = (view, attrs, ...children) => {
     };
   }
 
-  /*  Injects a callback inside the vnode with the given name (used in the dom callback) */
   function injectDom(view) {
-    if (!view || typeof view !== 'object') {
-      return;
-    }
-    if (!view.tag) {
-      return;
-    }
-
+    if (!view || typeof view !== 'object') return;
+    if (!view.tag) return;
     view.attrs.dom = dom;
   }
 
@@ -249,7 +233,7 @@ export const component = (view, attrs, ...children) => {
       vnode.tag = view;
       vnode.state = view.apply(vnode, [{...vnode}]);
 
-      // Forward lifecycle method inside attributes (used to override methods outside components)
+      // Forward lifecycle method inside attributes
       for (const attr of Object.keys(vnode.attrs)) {
         if (lifecycleMethods.some(method => method === attr)) {
           vnode.state[attr] = vnode.attrs[attr];
@@ -270,19 +254,50 @@ export const component = (view, attrs, ...children) => {
       vnode.state.oninit.call(context(vnode.state.oninit, vnode), vnode);
     }
 
+    // Track update lifecycle
+    let hasRendered = false;
+    let lastComponents;
+    let prevSnapshot = null;
+
+    function cloneForBeforeUpdate(src) {
+      return {
+        attrs: {...src.attrs},
+        children: Array.isArray(src.children)
+          ? src.children.slice()
+          : src.children,
+        dom: src.dom,
+        domSize: src.domSize,
+        key: src.key,
+        state: src.state,
+        tag: src.tag,
+        text: src.text
+      };
+    }
+
     // Return the view‐function wrapper.
-    // (Here we merge the attributes and children)
     return data => {
-      /* This `data` return needs to be diffed in order to get only the attrs and not the children */
-
-      // TODO: THIS IS DUE TO A PROBLEM WITH CHILDREN FILTERING (QUICK FIX WITH 0 objects)
+      // Merge incoming attrs from the renderer
+      // TODO: quick fix for children filtering
       for (const [key, value] of Object.entries(data)) {
-        if (value instanceof s.View) {
-          return;
-        }
-
+        if (value instanceof s.View) return;
         if (key !== '0') {
           vnode.attrs[key] = value;
+        }
+      }
+
+      // onbeforeupdate: only on subsequent renders
+      if (hasRendered && typeof vnode.state.onbeforeupdate === 'function') {
+        const shouldSkip =
+          vnode.state.onbeforeupdate.call(
+            context(vnode.state.onbeforeupdate, vnode),
+            vnode,
+            prevSnapshot
+          ) === false;
+
+        if (shouldSkip) {
+          // Prevent DOM patching and skip onupdate/view
+          ignore(true);
+          return lastComponents;
         }
       }
 
@@ -291,25 +306,22 @@ export const component = (view, attrs, ...children) => {
         vnode
       );
 
-      // Handle the `onbeforeupdate` lifecycle
-      if (
-        vnode.state.onbeforeupdate &&
-        typeof vnode.state.onbeforeupdate === 'function'
-      ) {
-        ignore(vnode.state.onbeforeupdate() === false);
-      }
-
-      // Handle the `onupdate` lifecycle
+      // Handle the `onupdate` lifecycle (only if not skipped)
       if (vnode.state.onupdate) {
         vnode.state.onupdate.call(context(vnode.state.onupdate, vnode), vnode);
       }
 
-      // We inject the dom method into attrs to force the execution of `oncreate` and `onremove`
+      // Inject dom callbacks to support oncreate/onremove
       if (Array.isArray(components)) {
         components.forEach(injectDom);
       } else {
         injectDom(components);
       }
+
+      // Update caches for the next cycle
+      prevSnapshot = cloneForBeforeUpdate(vnode);
+      lastComponents = components;
+      hasRendered = true;
 
       return components;
     };
